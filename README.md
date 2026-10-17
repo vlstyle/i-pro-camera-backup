@@ -19,4 +19,4 @@ Panasonic i-PRO ネットワークカメラ（WV-S1531L / WV-S3530 など）のS
 
 ## ライセンス
 
-未定（実装着手時に決める）。
+[MIT](LICENSE)
