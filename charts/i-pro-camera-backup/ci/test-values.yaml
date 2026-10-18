@@ -1,0 +1,15 @@
+dest:
+  url: s3://bucket/
+aws:
+  region: ap-northeast-1
+  webIdentity:
+    roleArn: arn:aws:iam::123456789012:role/example
+serviceAccount:
+  annotations:
+    example.invalid/annotation: "true"
+cameras:
+  - name: camera1
+    host: camera1.example.invalid
+  - name: camera2
+    host: camera2.example.invalid
+    schedule: "1-59/5 * * * *"

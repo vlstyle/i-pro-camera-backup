@@ -1,0 +1,6 @@
+apiVersion: v2
+name: i-pro-camera-backup
+description: CronJobs that back up i-PRO network camera SD card recordings to local storage or AWS S3
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

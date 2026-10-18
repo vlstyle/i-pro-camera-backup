@@ -1,0 +1,125 @@
+{{- $root := . }}
+{{- $tag := default .Chart.AppVersion .Values.image.tag }}
+{{- $destUrl := required "dest.url is required" .Values.dest.url }}
+{{- range $camera := .Values.cameras }}
+{{- $name := required "cameras[].name is required" $camera.name }}
+{{- $host := required (printf "cameras[%s].host is required" $name) $camera.host }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ printf "%s-%s" $root.Release.Name $name }}
+  labels:
+    {{- include "i-pro-camera-backup.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+spec:
+  schedule: {{ default $root.Values.schedule $camera.schedule | quote }}
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: {{ $root.Values.job.startingDeadlineSeconds }}
+  successfulJobsHistoryLimit: {{ $root.Values.job.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $root.Values.job.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ $root.Values.job.backoffLimit }}
+      activeDeadlineSeconds: {{ $root.Values.job.activeDeadlineSeconds }}
+      template:
+        metadata:
+          labels:
+            {{- include "i-pro-camera-backup.labels" $root | nindent 12 }}
+            app.kubernetes.io/component: {{ $name }}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: {{ include "i-pro-camera-backup.serviceAccountName" $root }}
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: backup
+              image: {{ printf "%s:%s" $root.Values.image.repository $tag | quote }}
+              imagePullPolicy: {{ $root.Values.image.pullPolicy }}
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              resources:
+                {{- toYaml $root.Values.resources | nindent 16 }}
+              env:
+                - name: CAMERA_NAME
+                  value: {{ $name | quote }}
+                - name: CAMERA_HOST
+                  value: {{ $host | quote }}
+                - name: CAMERA_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ $root.Values.credentialsSecret }}
+                      key: {{ printf "%s-user" $name }}
+                - name: CAMERA_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ $root.Values.credentialsSecret }}
+                      key: {{ printf "%s-password" $name }}
+                - name: DEST_URL
+                  value: {{ $destUrl | quote }}
+                {{- with $root.Values.dest.s3Endpoint }}
+                - name: DEST_S3_ENDPOINT
+                  value: {{ . | quote }}
+                {{- end }}
+                - name: FETCH_MAX_FILES
+                  value: {{ $root.Values.fetch.maxFiles | quote }}
+                - name: FETCH_HTTP_TIMEOUT
+                  value: {{ $root.Values.fetch.httpTimeout | quote }}
+                - name: LOG_LEVEL
+                  value: {{ $root.Values.log.level | quote }}
+                - name: LOG_FORMAT
+                  value: {{ $root.Values.log.format | quote }}
+                {{- if $root.Values.aws.webIdentity.roleArn }}
+                - name: AWS_ROLE_ARN
+                  value: {{ $root.Values.aws.webIdentity.roleArn | quote }}
+                - name: AWS_WEB_IDENTITY_TOKEN_FILE
+                  value: /var/run/secrets/aws/token
+                - name: AWS_REGION
+                  value: {{ required "aws.region is required with aws.webIdentity.roleArn" $root.Values.aws.region | quote }}
+                - name: AWS_STS_REGIONAL_ENDPOINTS
+                  value: regional
+                {{- end }}
+                {{- with $root.Values.extraEnv }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
+              {{- if or $root.Values.aws.webIdentity.roleArn $root.Values.extraVolumeMounts }}
+              volumeMounts:
+                {{- if $root.Values.aws.webIdentity.roleArn }}
+                - name: aws-token
+                  mountPath: /var/run/secrets/aws
+                  readOnly: true
+                {{- end }}
+                {{- with $root.Values.extraVolumeMounts }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
+              {{- end }}
+          {{- if or $root.Values.aws.webIdentity.roleArn $root.Values.extraVolumes }}
+          volumes:
+            {{- if $root.Values.aws.webIdentity.roleArn }}
+            - name: aws-token
+              projected:
+                sources:
+                  - serviceAccountToken:
+                      audience: {{ $root.Values.aws.webIdentity.audience }}
+                      expirationSeconds: 86400
+                      path: token
+            {{- end }}
+            {{- with $root.Values.extraVolumes }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- with $root.Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $root.Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }}

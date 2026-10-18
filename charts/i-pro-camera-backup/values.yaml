@@ -1,0 +1,53 @@
+image:
+  repository: ghcr.io/vlstyle/i-pro-camera-backup
+  tag: ""
+  pullPolicy: IfNotPresent
+
+cameras: []
+
+schedule: "*/5 * * * *"
+
+dest:
+  url: ""
+  s3Endpoint: ""
+
+fetch:
+  maxFiles: 50
+  httpTimeout: 60s
+
+log:
+  level: info
+  format: json
+
+credentialsSecret: camera-credentials
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+aws:
+  region: ""
+  webIdentity:
+    roleArn: ""
+    audience: sts.amazonaws.com
+
+job:
+  startingDeadlineSeconds: 120
+  activeDeadlineSeconds: 600
+  backoffLimit: 0
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 64Mi
+  limits:
+    memory: 128Mi
+
+extraEnv: []
+extraVolumes: []
+extraVolumeMounts: []
+nodeSelector: {}
+tolerations: []
