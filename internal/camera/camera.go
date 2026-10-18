@@ -38,7 +38,10 @@ func New(host, user, password string, timeout time.Duration) *Client {
 		base: "http://" + host,
 		user: user,
 		pass: password,
-		http: &http.Client{Timeout: timeout},
+		http: &http.Client{
+			Timeout:   timeout,
+			Transport: &http.Transport{DisableKeepAlives: true},
+		},
 	}
 }
 
