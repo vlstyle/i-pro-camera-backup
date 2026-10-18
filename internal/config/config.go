@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/vlstyle/i-pro-camera-downloader/internal/store"
+	"github.com/vlstyle/i-pro-camera-backup/internal/store"
 )
 
 var cameraNamePattern = regexp.MustCompile(`^[a-z0-9_-]+$`)

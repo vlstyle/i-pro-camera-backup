@@ -9,10 +9,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/vlstyle/i-pro-camera-downloader/internal/camera"
-	"github.com/vlstyle/i-pro-camera-downloader/internal/config"
-	"github.com/vlstyle/i-pro-camera-downloader/internal/fetcher"
-	"github.com/vlstyle/i-pro-camera-downloader/internal/store"
+	"github.com/vlstyle/i-pro-camera-backup/internal/camera"
+	"github.com/vlstyle/i-pro-camera-backup/internal/config"
+	"github.com/vlstyle/i-pro-camera-backup/internal/fetcher"
+	"github.com/vlstyle/i-pro-camera-backup/internal/store"
 )
 
 func main() {
