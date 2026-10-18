@@ -1,5 +1,5 @@
 {{- $root := . }}
-{{- $tag := required "image.tag is required" .Values.image.tag }}
+{{- $tag := default .Chart.AppVersion .Values.image.tag }}
 {{- $destUrl := required "dest.url is required" .Values.dest.url }}
 {{- range $camera := .Values.cameras }}
 {{- $name := required "cameras[].name is required" $camera.name }}

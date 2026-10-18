@@ -30,6 +30,10 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - run: helm lint charts/i-pro-camera-backup -f charts/i-pro-camera-backup/ci/test-values.yaml
       - run: helm template camera-backup charts/i-pro-camera-backup -f charts/i-pro-camera-backup/ci/test-values.yaml > /dev/null
+      - run: |
+          app_version="$(sed -n 's/^appVersion: "\(.*\)"$/\1/p' charts/i-pro-camera-backup/Chart.yaml)"
+          helm template camera-backup charts/i-pro-camera-backup -f charts/i-pro-camera-backup/ci/test-values.yaml | grep -q "i-pro-camera-backup:${app_version}\""
+      - run: helm template camera-backup charts/i-pro-camera-backup -f charts/i-pro-camera-backup/ci/test-values.yaml --set image.tag=sha-0000000 | grep -q 'i-pro-camera-backup:sha-0000000"'
 
   secrets:
     runs-on: ubuntu-latest
