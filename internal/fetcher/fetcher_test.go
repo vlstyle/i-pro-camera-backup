@@ -12,8 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vlstyle/i-pro-camera-downloader/internal/camera"
-	"github.com/vlstyle/i-pro-camera-downloader/internal/store"
+	"github.com/vlstyle/i-pro-camera-backup/internal/camera"
+	"github.com/vlstyle/i-pro-camera-backup/internal/store"
 )
 
 type fakeCamera struct {

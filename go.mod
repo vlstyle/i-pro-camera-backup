@@ -1,4 +1,4 @@
-module github.com/vlstyle/i-pro-camera-downloader
+module github.com/vlstyle/i-pro-camera-backup
 
 go 1.27.2
 
