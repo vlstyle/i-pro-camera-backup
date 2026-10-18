@@ -103,7 +103,7 @@ S3の認証とリージョンはAWS SDKの標準の環境変数（`AWS_ACCESS_KE
 - 設定: 環境変数でコンテナに投入（命名は「環境変数」を参照）
 - ライセンス: MIT
 - S3のアーカイブ形式: 既存の時間単位zipを踏襲
-- 取得方式: 公式CGI（`get_mp4_list`/`get_mp4_file`）、Basic認証（2機種で`get_mp4_list`の動作を確認済み。Web UI再現は採用しない）
+- 取得方式: 公式CGI（`get_mp4_list`/`get_mp4_file`）、Basic認証（2機種で`get_mp4_list`、1機種で`get_mp4_file`の動作を確認済み。Web UI再現は採用しない）
 - 録画の増分取得は`last_fetch`までさかのぼって取りこぼさない（公式CGIなら時間範囲指定、Web UI再現ならページ送り）
 - 対応機種: 手持ちのWV-S1531L、WV-S3530のみ。動作確認は実機のみ（模擬サーバーは作らない）
 
