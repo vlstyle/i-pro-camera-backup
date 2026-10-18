@@ -18,6 +18,14 @@ docker run --rm --env-file .env -v "$PWD/data:/data" ghcr.io/vlstyle/i-pro-camer
 
 終了コードは、成功が0、設定エラーが2、取得・保存の失敗が1。
 
+## Kubernetes（Helmチャート）
+
+`charts/i-pro-camera-backup/`が、カメラごとのCronJobを作るHelmチャート。`cameras`に名前とホストを並べると、カメラ1台につきCronJobが1つ作られる。環境ごとの値は利用する側のリポジトリで`values.yaml`として持つ（例は[`ci/test-values.yaml`](charts/i-pro-camera-backup/ci/test-values.yaml)、すべての値は[`values.yaml`](charts/i-pro-camera-backup/values.yaml)）。
+
+- `image.tag`と`dest.url`は必須。`cameras[].name`は`[a-z0-9-]`（CronJob名に使う）。
+- カメラの認証情報は、Secret（`credentialsSecret`、既定`camera-credentials`）の`<カメラ名>-user`・`<カメラ名>-password`から読む。
+- `aws.webIdentity.roleArn`を指定すると、IRSA用のprojected tokenと`AWS_*`環境変数を設定する。
+
 ## 開発
 
 ```bash
