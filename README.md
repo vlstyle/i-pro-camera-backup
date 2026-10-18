@@ -24,7 +24,7 @@ docker run --rm --env-file .env -v "$PWD/data:/data" ghcr.io/vlstyle/i-pro-camer
 
 - `dest.url`は必須。`image.tag`を省略すると、チャートの`appVersion`のイメージを使う。`cameras[].name`は`[a-z0-9-]`（CronJob名に使う）。
 - カメラの認証情報は、Secret（`credentialsSecret`、既定`camera-credentials`）の`<カメラ名>-user`・`<カメラ名>-password`から読む。
-- `aws.webIdentity.roleArn`を指定すると、IRSA用のprojected tokenと`AWS_*`環境変数を設定する。
+- `aws.webIdentity.roleArn`を指定すると、IRSA用のprojected tokenと`AWS_*`環境変数を設定する。このとき`aws.region`も必須（既定値は持たない）。
 
 ## リリース
 

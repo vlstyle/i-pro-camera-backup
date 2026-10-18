@@ -27,7 +27,7 @@ serviceAccount:
   annotations: {}
 
 aws:
-  region: ap-northeast-1
+  region: ""
   webIdentity:
     roleArn: ""
     audience: sts.amazonaws.com

@@ -1,6 +1,7 @@
 dest:
   url: s3://bucket/
 aws:
+  region: ap-northeast-1
   webIdentity:
     roleArn: arn:aws:iam::123456789012:role/example
 serviceAccount:
