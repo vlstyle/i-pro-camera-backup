@@ -28,10 +28,11 @@ docker run --rm --env-file .env -v "$PWD/data:/data" ghcr.io/vlstyle/i-pro-camer
 
 ## リリース
 
-1. `charts/i-pro-camera-backup/Chart.yaml`の`appVersion`（イメージのバージョン）と`version`（チャートのバージョン）を上げるPRをマージする。
+1. `charts/i-pro-camera-backup/Chart.yaml`の`appVersion`（イメージのバージョン）と`version`（チャートのバージョン）を上げるPRをマージする。`skip-changelog`ラベルを付けると、リリースノートに載らない。
 2. そのコミットに`vX.Y.Z`のタグを付けてpushする（`X.Y.Z`は`appVersion`と一致させる。一致しないとワークフローが失敗する）。
 3. `ghcr.io/vlstyle/i-pro-camera-backup:X.Y.Z`が公開される。`main`へのマージごとに、`latest`と`sha-<コミット>`も公開される。
-4. 利用側は、チャートを参照するコミットを更新する。
+4. GitHub Releaseが作られる。タイトルはタグ名（`vX.Y.Z`）、説明文は前回のタグ以降にマージされたPRから自動生成され（分類は[`.github/release.yml`](.github/release.yml)）、linux・darwin・windowsのamd64/arm64のバイナリと`checksums.txt`が添付される。
+5. 利用側は、チャートを参照するコミットを更新する。
 
 ## 開発
 
